@@ -6,5 +6,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'event-calendar-client';
+
+  title: string;
+
+  constructor() {
+    this.title = 'event-calendar-client';
+  }
+
 }
