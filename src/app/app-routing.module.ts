@@ -2,13 +2,17 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {EventListComponent} from "./event-list/event-list.component";
 import {EventFormComponent} from "./event-form/event-form.component";
+import {CalendarComponent} from "./calendar/calendar.component";
 
 const routes: Routes = [
   {
-    path: 'rest/event/all', component: EventListComponent
+    path: 'event/all', component: EventListComponent
   },
   {
-    path: 'rest/event/add', component: EventFormComponent
+    path: 'event/add', component: EventFormComponent
+  },
+  {
+    path: 'calendar', component: CalendarComponent
   }
 ];
 

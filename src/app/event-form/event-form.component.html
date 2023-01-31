@@ -2,107 +2,175 @@
   <div class="card-body">
     <form (ngSubmit)="onSubmit()" #eventForm="ngForm">
       <div class="form-group">
-        <label for="id">Id</label>
-        <input type="text" [(ngModel)]="event.id"
-               class="form-control"
-               id="id"
-               name="id"
-               placeholder="Enter id"
-               required #id="ngModel">
+        <table style="border-collapse: collapse; width: 100%; height: 275px;" border="1">
+          <tbody>
+          <tr style="height: 30px;">
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <label for="name">Название</label>
+              </div>
+            </td>
+            <td style="width: 75%; height: 30px;" colspan="3">
+              <div class="form-group">
+                <input type="text" [(ngModel)]="event.name"
+                        class="form-control"
+                        id="name"
+                        name="name"
+                        placeholder="Введите название события"
+                        maxlength="50"
+                        required #name="ngModel">
+              </div>
+            </td>
+          </tr>
+          <tr style="height: 30px;">
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <label for="startTime">Время начала события</label>
+              </div>
+            </td>
+            <td style="width: 75%; height: 30px;" colspan="3">
+              <div class="form-group">
+                <input type="datetime-local" [(ngModel)]="event.startTime"
+                       class="form-control"
+                       id="startTime"
+                       name="startTime"
+                       placeholder="Введите время начала события"
+                       required #startTime="ngModel">
+              </div>
+            </td>
+          </tr>
+          <tr style="height: 30px;">
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <label for="endTime">Время конца события</label>
+              </div>
+            </td>
+            <td style="width: 75%; height: 30px;" colspan="3">
+              <div class="form-group">
+                <input type="datetime-local" [(ngModel)]="event.endTime"
+                       class="form-control"
+                       id="endTime"
+                       name="endTime"
+                       placeholder="Введите время конца события"
+                       required #endTime="ngModel">
+              </div>
+            </td>
+          </tr>
+          <tr style="height: 30px;">
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <label for="purpose">Цель события</label>
+              </div>
+            </td>
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <select [(ngModel)]="event.purpose"
+                        class="form-control"
+                        id="purpose"
+                        name="purpose"
+                        required #purpose="ngModel">
+                  <option [ngValue] = 0 disabled selected>Выберете цель события</option>
+                  <option *ngFor="let purpose of purposes" [ngValue]="purpose.id">{{purpose.name}}</option>
+                  <option [ngValue] = 10 disabled>Другое...</option>
+                </select>
+              </div>
+            </td>
+            <td style="width: 25%; height: 30px;" colspan="2">
+              <input type="text" size="30" hidden>
+            </td>
+          </tr>
+          <tr style="height: 30px;">
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <label for="meetingRoom">Место события</label>
+              </div>
+            </td>
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <select [(ngModel)]="event.meetingRoom"
+                        class="form-control"
+                        id="meetingRoom"
+                        name="meetingRoom"
+                        required #meetingRoom="ngModel">
+                  <option [ngValue] = 0 disabled selected>Выберете место события</option>
+                  <option *ngFor="let meetingRoom of meetingRooms" [ngValue]="meetingRoom.id">
+                    {{meetingRoom.name}}</option>
+                  <option [ngValue] = 10 disabled>Другое...</option>
+                </select>
+              </div>
+            </td>
+            <td style="width: 25%; height: 30px;" colspan="2">
+              <input type="text" size="30" hidden>
+            </td>
+          </tr>
+          <tr style="height: 30px;">
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <label for="applicant">Организатор</label>
+              </div>
+            </td>
+            <td style="width: 75%; height: 30px;" colspan="3">
+              <div class="form-group">
+                <input type="text" [(ngModel)]="event.applicant"
+                       class="form-control"
+                       id="applicant"
+                       name="applicant"
+                       placeholder="Введите ФИО организатора события"
+                       maxlength="50"
+                       required #applicant="ngModel">
+              </div>
+            </td>
+          </tr>
+          <tr style="height: 65px;">
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <label for="participantsList">Список участников</label>
+              </div>
+            </td>
+            <td style="width: 75%; height: 30px;" colspan="3">
+              <div class="form-group">
+                <textarea [(ngModel)]="event.participantsList"
+                          class="form-control"
+                          id="participantsList"
+                          name="participantsList"
+                          placeholder="Введите ФИО участников события"
+                          required #participantsList="ngModel"
+                          maxlength="256"
+                          cols="56"
+                          rows="3"></textarea>
+              </div>
+            </td>
+          </tr>
+          <tr style="height: 30px;">
+            <td style="text-align: center; width: 25%; height: 30px;">
+              <a routerLink="/calendar" class="btn btn-info">Отменить</a>
+            </td>
+            <td style="text-align: center; width: 25%; height: 30px;">
+              <button type="button" hidden>
+                Предыдущее состояние
+              </button></td>
+            <td style="text-align: center; width: 25%; height: 30px;">
+              <button type="submit" [disabled]="!(eventForm.form.valid) || compareDates()"
+                      class="btn btn-info">Сохранить</button>
+            </td>
+            <td style="text-align: center; width: 25%; height: 30px;">
+              <button type="button" hidden>
+                Последующее состояние
+              </button></td>
+          </tr>
+          </tbody>
+        </table>
+        <div [hidden]="!name.pristine" class="alert alert-danger">Необходимо указать название события!</div>
+        <div [hidden]="!startTime.pristine" class="alert alert-danger">Необходимо указать время начала события!</div>
+        <div [hidden]="!endTime.pristine" class="alert alert-danger">Необходимо указать время конца события!</div>
+        <div [hidden]="!purpose.pristine" class="alert alert-danger">Необходимо выбрать цель события!</div>
+        <div [hidden]="!meetingRoom.pristine" class="alert alert-danger">Необходимо выбрать место события!</div>
+        <div [hidden]="!applicant.pristine" class="alert alert-danger">Необходимо указать организатора события!</div>
+        <div [hidden]="!participantsList.pristine" class="alert alert-danger">
+          Необходимо указать участников события!</div>
+        <div [hidden]="!compareDates()" class="alert alert-danger">
+          Время конца события должно быть позднее времени начала события!</div>
       </div>
-      <div [hidden]="!id.pristine" class="alert alert-danger">Id is required</div>
-      <div class="form-group">
-        <label for="startTime">Start Time</label>
-        <input type="text" [(ngModel)]="event.startTime"
-               class="form-control"
-               id="startTime"
-               name="startTime"
-               placeholder="Enter start time"
-               required #startTime="ngModel">
-      </div>
-      <div [hidden]="!startTime.pristine" class="alert alert-danger">Start time is required</div>
-      <div class="form-group">
-        <label for="endTime">End Time</label>
-        <input type="text" [(ngModel)]="event.endTime"
-               class="form-control"
-               id="endTime"
-               name="endTime"
-               placeholder="Enter end time"
-               required #endTime="ngModel">
-      </div>
-      <div [hidden]="!endTime.pristine" class="alert alert-danger">End time is required</div>
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" [(ngModel)]="event.name"
-               class="form-control"
-               id="name"
-               name="name"
-               placeholder="Enter a meeting name"
-               required #name="ngModel">
-      </div>
-      <div [hidden]="!name.pristine" class="alert alert-danger">Name is required</div>
-      <div class="form-group">
-        <label for="creationTime">Creation Time</label>
-        <input type="text" [(ngModel)]="event.creationTime"
-               class="form-control"
-               id="creationTime"
-               name="creationTime"
-               placeholder="Enter creation time"
-               required #creationTime="ngModel">
-      </div>
-      <div [hidden]="!creationTime.pristine" class="alert alert-danger">Creation time is required</div>
-      <div class="form-group">
-        <label for="purpose">Purpose</label>
-        <input type="text" [(ngModel)]="event.purpose"
-               class="form-control"
-               id="purpose"
-               name="purpose"
-               placeholder="Enter a meeting purpose"
-               required #purpose="ngModel">
-      </div>
-      <div [hidden]="!purpose.pristine" class="alert alert-danger">Purpose is required</div>
-      <div class="form-group">
-        <label for="meetingRoom">Meeting Room</label>
-        <input type="text" [(ngModel)]="event.meetingRoom"
-               class="form-control"
-               id="meetingRoom"
-               name="meetingRoom"
-               placeholder="Enter a meeting room name"
-               required #meetingRoom="ngModel">
-      </div>
-      <div [hidden]="!meetingRoom.pristine" class="alert alert-danger">Meeting room is required</div>
-      <div class="form-group">
-        <label for="initialState">Initial State</label>
-        <input type="text" [(ngModel)]="event.initialState"
-               class="form-control"
-               id="initialState"
-               name="initialState"
-               placeholder="Enter initial state"
-               required #initialState="ngModel">
-      </div>
-      <div [hidden]="!initialState.pristine" class="alert alert-danger">Initial state is required</div>
-      <div class="form-group">
-        <label for="applicant">Applicant</label>
-        <input type="text" [(ngModel)]="event.applicant"
-               class="form-control"
-               id="applicant"
-               name="applicant"
-               placeholder="Enter an applicant"
-               required #applicant="ngModel">
-      </div>
-      <div [hidden]="!applicant.pristine" class="alert alert-danger">Applicant is required</div>
-      <div class="form-group">
-        <label for="participantsList">Participants List</label>
-        <input type="text" [(ngModel)]="event.participantsList"
-               class="form-control"
-               id="participantsList"
-               name="participantsList"
-               placeholder="Enter participants list"
-               required #participantsList="ngModel">
-      </div>
-      <div [hidden]="!participantsList.pristine" class="alert alert-danger">Participants list is required</div>
-      <button type="submit" [disabled]="!eventForm.form.valid"
-              class="btn btn-info">Submit</button>
     </form>
   </div>
 </div>

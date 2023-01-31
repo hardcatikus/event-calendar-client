@@ -8,12 +8,16 @@ import { EventFormComponent } from './event-form/event-form.component';
 import {EventService} from "./service/event.service";
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
+import { CalendarComponent } from './calendar/calendar.component';
+import {MeetingRoomService} from "./service/meeting-room.service";
+import {PurposeService} from "./service/purpose.service";
 
 @NgModule({
   declarations: [
     AppComponent,
     EventListComponent,
-    EventFormComponent
+    EventFormComponent,
+    CalendarComponent
   ],
   imports: [
     BrowserModule,
@@ -21,7 +25,11 @@ import {FormsModule} from "@angular/forms";
     HttpClientModule,
     FormsModule
   ],
-  providers: [EventService],
+  providers: [
+    EventService,
+    MeetingRoomService,
+    PurposeService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

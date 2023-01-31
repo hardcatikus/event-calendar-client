@@ -1,12 +1,12 @@
 export class Event {
 
   id!: number;
-  startTime!: string;
-  endTime!: string;
+  startTime!: Date;
+  endTime!: Date;
   name!: string;
-  creationTime!: string;
-  purpose!: string;
-  meetingRoom!: string;
+  creationTime!: Date;
+  purpose!: number;
+  meetingRoom!: number;
   initialState!: number;
   applicant!: string;
   participantsList!: string;

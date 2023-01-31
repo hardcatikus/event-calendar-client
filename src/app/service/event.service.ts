@@ -4,7 +4,7 @@ import { Event } from '../model/event';
 import {Observable} from "rxjs";
 import {environment} from "../../environments/environments";
 
-@Injectable()//{providedIn: 'root'})
+@Injectable()
 export class EventService {
 
   private eventURL: string;
