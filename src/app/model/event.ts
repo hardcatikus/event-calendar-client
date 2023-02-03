@@ -10,5 +10,6 @@ export class Event {
   initialState!: number;
   applicant!: string;
   participantsList!: string;
+  lastVersion!: boolean;
 
 }

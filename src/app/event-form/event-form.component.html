@@ -2,7 +2,7 @@
   <div class="card-body">
     <form (ngSubmit)="onSubmit()" #eventForm="ngForm">
       <div class="form-group">
-        <table style="border-collapse: collapse; width: 100%; height: 275px;" border="1">
+        <table style="border-collapse: collapse; width: 100%; height: 275px; border: none; ">
           <tbody>
           <tr style="height: 30px;">
             <td style="width: 25%; height: 30px;">
@@ -30,12 +30,13 @@
             </td>
             <td style="width: 75%; height: 30px;" colspan="3">
               <div class="form-group">
-                <input type="datetime-local" [(ngModel)]="event.startTime"
+                <input type="datetime-local" [(ngModel)]="startTimeString"
                        class="form-control"
                        id="startTime"
                        name="startTime"
                        placeholder="Введите время начала события"
-                       required #startTime="ngModel">
+                       required #startTime="ngModel"
+                       (change)="startTimeChange()">
               </div>
             </td>
           </tr>
@@ -47,12 +48,13 @@
             </td>
             <td style="width: 75%; height: 30px;" colspan="3">
               <div class="form-group">
-                <input type="datetime-local" [(ngModel)]="event.endTime"
+                <input type="datetime-local" [(ngModel)]="endTimeString"
                        class="form-control"
                        id="endTime"
                        name="endTime"
                        placeholder="Введите время конца события"
-                       required #endTime="ngModel">
+                       required #endTime="ngModel"
+                       (change)="endTimeChange()">
               </div>
             </td>
           </tr>
@@ -71,7 +73,7 @@
                         required #purpose="ngModel">
                   <option [ngValue] = 0 disabled selected>Выберете цель события</option>
                   <option *ngFor="let purpose of purposes" [ngValue]="purpose.id">{{purpose.name}}</option>
-                  <option [ngValue] = 10 disabled>Другое...</option>
+                  <option [ngValue] = 100 disabled>Другое...</option>
                 </select>
               </div>
             </td>
@@ -95,7 +97,7 @@
                   <option [ngValue] = 0 disabled selected>Выберете место события</option>
                   <option *ngFor="let meetingRoom of meetingRooms" [ngValue]="meetingRoom.id">
                     {{meetingRoom.name}}</option>
-                  <option [ngValue] = 10 disabled>Другое...</option>
+                  <option [ngValue] = 100 disabled>Другое...</option>
                 </select>
               </div>
             </td>
@@ -150,13 +152,14 @@
                 Предыдущее состояние
               </button></td>
             <td style="text-align: center; width: 25%; height: 30px;">
+              <button type="button" hidden>
+                Последующее состояние
+              </button>
+            </td>
+            <td style="text-align: center; width: 25%; height: 30px;">
               <button type="submit" [disabled]="!(eventForm.form.valid) || compareDates()"
                       class="btn btn-info">Сохранить</button>
             </td>
-            <td style="text-align: center; width: 25%; height: 30px;">
-              <button type="button" hidden>
-                Последующее состояние
-              </button></td>
           </tr>
           </tbody>
         </table>

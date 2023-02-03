@@ -17,4 +17,7 @@ export class PurposeService {
     return this.http.get<Purpose[]>(this.eventURL + 'rest/purpose/all');
   }
 
+  public getPurpose(id: number): Observable<Purpose> {
+    return this.http.get<Purpose>(this.eventURL + 'rest/purpose/' + id);
+  }
 }

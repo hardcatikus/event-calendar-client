@@ -17,4 +17,7 @@ export class MeetingRoomService {
     return this.http.get<MeetingRoom[]>(this.eventURL + 'rest/meeting-room/all');
   }
 
+  public getMeetingRoom(id: number): Observable<MeetingRoom> {
+    return this.http.get<MeetingRoom>(this.eventURL + 'rest/meeting-room/' +id);
+  }
 }

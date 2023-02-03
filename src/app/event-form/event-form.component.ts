@@ -15,9 +15,12 @@ import {PurposeService} from "../service/purpose.service";
 })
 export class EventFormComponent {
 
+  startTimeString!: string;
+  endTimeString!: string;
   event: Event;
   meetingRooms!: MeetingRoom [];
   purposes!: Purpose [];
+  formOfChanges: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -27,9 +30,19 @@ export class EventFormComponent {
     private purposeService: PurposeService
   ) {
     this.event = new Event();
+    this.formOfChanges = false;
+    this.route.queryParams.subscribe((queryParams:any) => {
+      let id = queryParams.eventId;
+      if(id){
+        this.fillFormElements(id);
+        this.formOfChanges = true;
+      }
+    })
   }
 
   ngOnInit() {
+    //this.startTimeString = new Date().toISOString().substring(0, 16);
+    //(document.getElementById("startTime") as HTMLInputElement).value = this.startTimeString;
     this.event.purpose = 0;
     this.event.meetingRoom = 0;
     this.meetingRoomService.getAllMeetingRooms().subscribe(data => {
@@ -49,11 +62,32 @@ export class EventFormComponent {
   }
 
   onSubmit(){
-    this.event.initialState = 0;
-    let currentTime = new Date();
-    currentTime.setHours(currentTime.getHours() + 3);
-    this.event.creationTime = currentTime;
-    this.eventService.addEvent(this.event).subscribe(result => this.gotoCalendar());
+    this.event.lastVersion = true;
+    this.event.creationTime = this.addThreeHours(new Date());
+    this.event.startTime = this.addThreeHours(this.event.startTime);
+    this.event.endTime = this.addThreeHours(this.event.endTime);
+    if (this.formOfChanges) {
+      if (this.event.initialState == 0) {
+        this.event.initialState = this.event.id;
+        this.cancelPreviousEvent();
+      }
+      else{
+        this.cancelPreviousEvent();
+      }
+    }
+    else{
+      this.event.initialState = 0;
+    }
+    this.event.id = 0;
+    this.eventService.addEvent(this.event).subscribe(result => {
+      this.gotoCalendar();
+      if (this.formOfChanges) {
+        alert("Событие было обновлено");
+      }
+      else{
+        alert("Событие было добавлено");
+      }
+    });
   }
 
   gotoCalendar(){
@@ -61,8 +95,42 @@ export class EventFormComponent {
   }
 
   compareDates(): boolean{
-    const startDate = new Date(this.event.startTime);
-    const endDate = new Date(this.event.endTime);
+    const startDate = new Date(this.startTimeString);
+    const endDate = new Date(this.endTimeString);
     return startDate >= endDate;
   }
+
+  fillFormElements(id: number){
+    this.eventService.getEvent(id).subscribe(data => {
+        this.event = data;
+      },
+      (error: HttpErrorResponse) => {
+        alert(error.message);
+      }, () => {
+      this.startTimeString = new Date(this.event.startTime).toISOString().substring(0, 16);
+      this.endTimeString = new Date(this.event.endTime).toISOString().substring(0, 16);
+      });
+  }
+
+  endTimeChange(){
+    this.event.endTime = new Date(this.endTimeString);
+  }
+
+  startTimeChange(){
+    this.event.startTime = new Date(this.startTimeString);
+  }
+
+  addThreeHours(date: Date): Date {
+    let newDate = new Date(date);
+    newDate.setHours(newDate.getHours() + 3);
+    return newDate;
+  }
+
+  cancelPreviousEvent(){
+    this.eventService.updateEventLastVersion(this.event.id).subscribe(data => {},
+      (error: HttpErrorResponse) => {
+        alert(error.message);
+      })
+  }
+
 }
