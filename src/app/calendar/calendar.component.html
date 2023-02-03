@@ -11,6 +11,7 @@
                   name="meetingRoomSelected">
             <option [ngValue] = 0 disabled >Выберете место события</option>
             <option *ngFor="let meetingRoom of meetingRooms" [ngValue]="meetingRoom.id">{{meetingRoom.name}}</option>
+            <option [ngValue] = 100 >Все места событий</option>
           </select>
         </td>
         <td style="text-align: center;border-color: white; border-bottom-color: grey;" colspan="3">

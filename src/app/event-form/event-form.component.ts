@@ -63,9 +63,6 @@ export class EventFormComponent {
 
   onSubmit(){
     this.event.lastVersion = true;
-    this.event.creationTime = this.addThreeHours(new Date());
-    this.event.startTime = this.addThreeHours(this.event.startTime);
-    this.event.endTime = this.addThreeHours(this.event.endTime);
     if (this.formOfChanges) {
       if (this.event.initialState == 0) {
         this.event.initialState = this.event.id;
@@ -76,6 +73,9 @@ export class EventFormComponent {
       }
     }
     else{
+      this.event.creationTime = this.addThreeHours(new Date());
+      this.event.startTime = this.addThreeHours(this.event.startTime);
+      this.event.endTime = this.addThreeHours(this.event.endTime);
       this.event.initialState = 0;
     }
     this.event.id = 0;

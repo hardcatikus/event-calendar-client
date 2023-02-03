@@ -53,15 +53,27 @@ export class CalendarComponent {
   fillCalendar(){
     this.hideEventDetails();
     this.clearCells();
-    this.eventService.getAllEventsByMeetingRoomAndDate(this.meetingRoomSelected,
-      this.dateSelected).subscribe(data => {
-        this.events = data;
-        this.checkEvents();
-      },
-      (error: HttpErrorResponse) => {
-        alert(error.message);
-      }
-    );
+    if(this.meetingRoomSelected == 100){
+      this.eventService.getAllEventsByDate(this.dateSelected).subscribe(data => {
+          this.events = data;
+          this.checkEvents();
+        },
+        (error: HttpErrorResponse) => {
+          alert(error.message);
+        }
+      );
+    }
+    else{
+      this.eventService.getAllEventsByMeetingRoomAndDate(this.meetingRoomSelected,
+        this.dateSelected).subscribe(data => {
+          this.events = data;
+          this.checkEvents();
+        },
+        (error: HttpErrorResponse) => {
+          alert(error.message);
+        }
+      );
+    }
   }
 
   private getMeetingRoomsFromDB(){
@@ -131,6 +143,9 @@ export class CalendarComponent {
   }
 
   showEventDetails(clickEvent: MouseEvent) {
+    if(this.meetingRoomSelected == 100){
+      return;
+    }
     let clickTarget = clickEvent.target as HTMLElement;
     if (clickTarget.style.backgroundColor != "red") {
       this.hideEventDetails();

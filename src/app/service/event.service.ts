@@ -35,4 +35,11 @@ export class EventService {
   public updateEventLastVersion(id: number): Observable<String> {
     return this.http.patch<String>(this.eventURL + 'rest/event/' + id, {});
   }
+
+  public getAllEventsByDate(dayStart: Date): Observable<Event[]> {
+    let params = new HttpParams().set("dayStart", String(dayStart));
+    return this.http.get<Event[]>(this.eventURL +
+      'rest/event/allByDay', {params: params});
+  }
+
 }
