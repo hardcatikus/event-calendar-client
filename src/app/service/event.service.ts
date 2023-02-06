@@ -25,9 +25,9 @@ export class EventService {
     return this.http.post<Event>(this.eventURL + 'rest/event/add',event);
   }
 
-  public getAllEventsByMeetingRoomAndDate(meetingRoom: number, dayStart: Date): Observable<Event[]> {
+  public getAllEventsByMeetingRoomAndDate(meetingRoom: number, dayStart: string): Observable<Event[]> {
     let params = new HttpParams().set("meetingRoom", meetingRoom)
-      .set("dayStart", String(dayStart));
+      .set("dayStart", dayStart);
     return this.http.get<Event[]>(this.eventURL +
       'rest/event/allByMeetingRoomAndDay', {params: params});
   }

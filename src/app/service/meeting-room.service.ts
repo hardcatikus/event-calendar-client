@@ -20,4 +20,9 @@ export class MeetingRoomService {
   public getMeetingRoom(id: number): Observable<MeetingRoom> {
     return this.http.get<MeetingRoom>(this.eventURL + 'rest/meeting-room/' +id);
   }
+
+  public addMeetingRoom(meetingRoom: MeetingRoom): Observable<MeetingRoom>{
+    return this.http.post<MeetingRoom>(this.eventURL + 'rest/meeting-room/add', meetingRoom);
+  }
+
 }

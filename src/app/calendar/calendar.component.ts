@@ -22,6 +22,12 @@ export class CalendarComponent {
   meetingRooms!: MeetingRoom [];
   eventSelectedMeetingRoom!: MeetingRoom;
   eventSelectedPurpose!: Purpose;
+  static nextColour: number = 0;
+  static coloursArray: readonly string[]= ["#ff0000", "#d20202", "#8f0101", "#6e0101",
+                                            "#f67676", "#be5d5d", "#8d4444", "#653131",
+                                            "#fd1515", "#cc1414", "#8f0f0f", "#560909",
+                                            "#fd3a3a", "#c52f2f", "#7c1d1d", "#4d1212",
+                                            "#fa6d6d", "#be5151", "#7e3737", "#502222"];
 
   constructor(
     private route: ActivatedRoute,
@@ -65,7 +71,7 @@ export class CalendarComponent {
     }
     else{
       this.eventService.getAllEventsByMeetingRoomAndDate(this.meetingRoomSelected,
-        this.dateSelected).subscribe(data => {
+        String(this.dateSelected)).subscribe(data => {
           this.events = data;
           this.checkEvents();
         },
@@ -120,6 +126,7 @@ export class CalendarComponent {
             this.paintCell(cellNumber,this.events[eventNumber].id);
           }
         }
+        ++CalendarComponent.nextColour;
       }
     }
   }
@@ -127,7 +134,11 @@ export class CalendarComponent {
   private paintCell(cellNumber: number, eventId: number){
     let cell = document.getElementById(String(cellNumber));
     if(cell){
-      cell.style.backgroundColor = 'red';
+      if(cell.style.backgroundColor != "white"){
+        cell.innerText = "2";
+      }
+      cell.style.backgroundColor = CalendarComponent.coloursArray[(CalendarComponent.nextColour
+                                                                % CalendarComponent.coloursArray.length)];
       cell.setAttribute("value",String(eventId));
     }
   }
@@ -138,6 +149,8 @@ export class CalendarComponent {
       if(cell){
         cell.style.backgroundColor = 'white';
         cell.removeAttribute("value");
+        cell.innerText = "";
+        cell.style.color = "white";
       }
     }
   }
@@ -147,7 +160,7 @@ export class CalendarComponent {
       return;
     }
     let clickTarget = clickEvent.target as HTMLElement;
-    if (clickTarget.style.backgroundColor != "red") {
+    if (clickTarget.style.backgroundColor == "white") {
       this.hideEventDetails();
       return;
     }

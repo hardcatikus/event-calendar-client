@@ -70,15 +70,35 @@
                         class="form-control"
                         id="purpose"
                         name="purpose"
-                        required #purpose="ngModel">
+                        required #purpose="ngModel"
+                        (change)="checkOtherPurpose()">
                   <option [ngValue] = 0 disabled selected>Выберете цель события</option>
                   <option *ngFor="let purpose of purposes" [ngValue]="purpose.id">{{purpose.name}}</option>
-                  <option [ngValue] = 100 disabled>Другое...</option>
+                  <option [ngValue] = 100 >Другое...</option>
                 </select>
               </div>
             </td>
-            <td style="width: 25%; height: 30px;" colspan="2">
-              <input type="text" size="30" hidden>
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <input type="text"
+                       class="form-control"
+                       id="new-purpose-text"
+                       placeholder="Введите новую цель"
+                       maxlength="50"
+                       size="30"
+                       hidden
+                       (change)="checkNewPurposeContent()">
+              </div>
+            </td>
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <button type="button"
+                        id = "new-purpose-button"
+                        hidden
+                        (click)="createNewPurpose()">
+                  Сохранить новую цель
+                </button>
+              </div>
             </td>
           </tr>
           <tr style="height: 30px;">
@@ -93,16 +113,36 @@
                         class="form-control"
                         id="meetingRoom"
                         name="meetingRoom"
-                        required #meetingRoom="ngModel">
+                        required #meetingRoom="ngModel"
+                        (change)="checkOtherMeetingRoom()">
                   <option [ngValue] = 0 disabled selected>Выберете место события</option>
                   <option *ngFor="let meetingRoom of meetingRooms" [ngValue]="meetingRoom.id">
                     {{meetingRoom.name}}</option>
-                  <option [ngValue] = 100 disabled>Другое...</option>
+                  <option [ngValue] = 100 >Другое...</option>
                 </select>
               </div>
             </td>
-            <td style="width: 25%; height: 30px;" colspan="2">
-              <input type="text" size="30" hidden>
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <input type="text"
+                       class="form-control"
+                       id="new-room-text"
+                       placeholder="Введите новое место"
+                       maxlength="50"
+                       size="30"
+                       hidden
+                       (change)="checkNewMeetingRoomContent()">
+              </div>
+            </td>
+            <td style="width: 25%; height: 30px;">
+              <div class="form-group">
+                <button type="button"
+                        id = "new-room-button"
+                        hidden
+                        (click)="createNewMeetingRoom()">
+                  Сохранить новое место
+                </button>
+              </div>
             </td>
           </tr>
           <tr style="height: 30px;">
@@ -157,22 +197,28 @@
               </button>
             </td>
             <td style="text-align: center; width: 25%; height: 30px;">
-              <button type="submit" [disabled]="!(eventForm.form.valid) || compareDates()"
+              <button type="submit" [disabled]="!(eventForm.form.valid) || checkAllFields()"
                       class="btn btn-info">Сохранить</button>
             </td>
           </tr>
           </tbody>
         </table>
-        <div [hidden]="!name.pristine" class="alert alert-danger">Необходимо указать название события!</div>
-        <div [hidden]="!startTime.pristine" class="alert alert-danger">Необходимо указать время начала события!</div>
-        <div [hidden]="!endTime.pristine" class="alert alert-danger">Необходимо указать время конца события!</div>
-        <div [hidden]="!purpose.pristine" class="alert alert-danger">Необходимо выбрать цель события!</div>
-        <div [hidden]="!meetingRoom.pristine" class="alert alert-danger">Необходимо выбрать место события!</div>
-        <div [hidden]="!applicant.pristine" class="alert alert-danger">Необходимо указать организатора события!</div>
-        <div [hidden]="!participantsList.pristine" class="alert alert-danger">
+        <div [hidden]="!checkName()" class="alert alert-danger">Необходимо указать название события!</div>
+        <div [hidden]="!checkStartTimeUsed()" class="alert alert-danger">Необходимо указать время начала события!</div>
+        <div [hidden]="!checkEndTimeUsed()" class="alert alert-danger">Необходимо указать время конца события!</div>
+        <div [hidden]="!checkPurpose()" class="alert alert-danger">Необходимо выбрать цель события!</div>
+        <div [hidden]="!checkMeetingRoom()" class="alert alert-danger">Необходимо выбрать место события!</div>
+        <div [hidden]="!checkApplicant()" class="alert alert-danger">Необходимо указать организатора события!</div>
+        <div [hidden]="!checkParticipantsList()" class="alert alert-danger">
           Необходимо указать участников события!</div>
         <div [hidden]="!compareDates()" class="alert alert-danger">
           Время конца события должно быть позднее времени начала события!</div>
+        <div [hidden]="!checkStartTime()" class="alert alert-danger">
+          Время начала события должно быть не ранее 8:00!</div>
+        <div [hidden]="!checkEndTime()" class="alert alert-danger">
+          Время конца события должно быть не позднее 20:00!</div>
+        <div [hidden]="!checkOneDay()" class="alert alert-danger">
+          Событие должно проводиться в течение одного дня!</div>
       </div>
     </form>
   </div>

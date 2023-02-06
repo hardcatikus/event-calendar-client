@@ -20,4 +20,9 @@ export class PurposeService {
   public getPurpose(id: number): Observable<Purpose> {
     return this.http.get<Purpose>(this.eventURL + 'rest/purpose/' + id);
   }
+
+  public addPurpose(purpose: Purpose): Observable<Purpose>{
+    return this.http.post<Purpose>(this.eventURL + 'rest/purpose/add', purpose);
+  }
+
 }
