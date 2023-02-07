@@ -42,4 +42,9 @@ export class EventService {
       'rest/event/allByDay', {params: params});
   }
 
+  public getAllEventStates(id: number): Observable<Event[]> {
+    let params = new HttpParams().set("id", id);
+    return  this.http.get<Event[]>(this.eventURL + 'rest/event/allStates', {params:params});
+  }
+
 }

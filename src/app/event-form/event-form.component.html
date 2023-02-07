@@ -188,12 +188,19 @@
               <a routerLink="/calendar" class="btn btn-info">Отменить</a>
             </td>
             <td style="text-align: center; width: 25%; height: 30px;">
-              <button type="button" hidden>
-                Предыдущее состояние
+              <button type="button"
+                      id="previous-state-button"
+                      [disabled]="checkPreviousState()"
+                      [hidden]="!formOfChanges"
+                      (click)="showPreviousState()">
+                Предыдущие изменения
               </button></td>
             <td style="text-align: center; width: 25%; height: 30px;">
-              <button type="button" hidden>
-                Последующее состояние
+              <button type="button"
+                      [disabled]="checkNextState()"
+                      [hidden]="!formOfChanges"
+                      (click)="showNextState()">
+                Последующие изменения
               </button>
             </td>
             <td style="text-align: center; width: 25%; height: 30px;">

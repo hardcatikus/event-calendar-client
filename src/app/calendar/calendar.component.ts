@@ -96,23 +96,17 @@ export class CalendarComponent {
   private checkEvents(){
     if(this.events.length > 0){
       for(let eventNumber = 0; eventNumber < this.events.length; eventNumber++){
-
         let eventStartTime = new Date(this.events[eventNumber].startTime);
-        eventStartTime.setHours(eventStartTime.getHours() - 3);
         let eventEndTime = new Date(this.events[eventNumber].endTime);
-        eventEndTime.setHours(eventEndTime.getHours() - 3);
         let cellStartTimeBound = new Date(this.dateSelected);
         cellStartTimeBound.setHours(7);
         cellStartTimeBound.setMinutes(50);
         cellStartTimeBound.setSeconds(0);
         let cellEndTimeBound = new Date(cellStartTimeBound);
         cellEndTimeBound.setMinutes(cellEndTimeBound.getMinutes() + 10);
-
         for(let cellNumber = 1; cellNumber <= 72; cellNumber++){
-
           cellStartTimeBound.setMinutes(cellStartTimeBound.getMinutes() + 10);
           cellEndTimeBound.setMinutes(cellEndTimeBound.getMinutes() + 10);
-
           if((cellStartTimeBound <= eventStartTime)
             && (cellEndTimeBound > eventStartTime)){
             this.paintCell(cellNumber,this.events[eventNumber].id);
@@ -160,7 +154,8 @@ export class CalendarComponent {
       return;
     }
     let clickTarget = clickEvent.target as HTMLElement;
-    if (clickTarget.style.backgroundColor == "white") {
+    if (clickTarget.style.backgroundColor == "white" ||
+        !clickTarget.getAttribute("value")) {
       this.hideEventDetails();
       return;
     }
@@ -212,7 +207,6 @@ export class CalendarComponent {
 
   private dateToLocalString(date: Date): String{
     let newDate = new Date(date);
-    newDate.setHours(newDate.getHours() - 3);
     return newDate.toLocaleString();
   }
 

@@ -21,6 +21,8 @@ export class EventFormComponent {
   meetingRooms!: MeetingRoom [];
   purposes!: Purpose [];
   formOfChanges: boolean;
+  eventStates!: Event [];
+  currentStateNumber!: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -41,10 +43,63 @@ export class EventFormComponent {
   }
 
   ngOnInit() {
-    //this.startTimeString = new Date().toISOString().substring(0, 16);
-    //(document.getElementById("startTime") as HTMLInputElement).value = this.startTimeString;
     this.fillMeetingRoomList();
     this.fillPurposeList();
+  }
+
+  fillFormElements(id: number){
+    this.eventService.getEvent(id).subscribe(data => {
+        if(data.initialState == 0){
+          this.event = data;
+          this.correctDateTimeElementValue();
+        }
+        else {
+          this.eventService.getAllEventStates(data.initialState).subscribe(data => {
+              this.eventStates = data;
+              this.currentStateNumber = 0;
+              this.event = this.copyEvent(this.eventStates[this.currentStateNumber]);
+              this.correctDateTimeElementValue();
+            },
+            (error: HttpErrorResponse) => {
+              alert(error.message);
+            });
+        }
+      },
+      (error: HttpErrorResponse) => {
+        alert(error.message);
+      });
+  }
+
+  private fillArrayEventStates(initialState: number){
+    this.eventService.getAllEventStates(initialState).subscribe(data=>{
+        this.eventStates = data;
+        this.currentStateNumber = 0;
+      },
+      (error: HttpErrorResponse) => {
+        alert(error.message);
+      });
+  }
+  private correctDateTimeElementValue(){
+    this.startTimeString = this.dateToString(this.event.startTime);
+    this.endTimeString = this.dateToString(this.event.endTime);
+    this.endTimeChange();
+    this.startTimeChange();
+  }
+
+  private dateToString(date: Date): string {
+    let result: string;
+    result = (new Date(date).toISOString().substring(0, 11)) +
+      (String(Number(new Date(date).toISOString().substring(11, 13))+3)) +
+      (new Date(date).toISOString().substring(13, 16));
+    return result;
+  }
+
+  endTimeChange(){
+    this.event.endTime = new Date(this.endTimeString);
+  }
+
+  startTimeChange(){
+    this.event.startTime = new Date(this.startTimeString);
   }
 
   private fillMeetingRoomList(){
@@ -84,12 +139,8 @@ export class EventFormComponent {
           else {
             let endTimeWithMoreMinutes = new Date(events[eventNumber].endTime);
             endTimeWithMoreMinutes.setMinutes(endTimeWithMoreMinutes.getMinutes() - 10);
-            endTimeWithMoreMinutes.setHours(endTimeWithMoreMinutes.getHours() - 3);
             let startTimeWithMoreMinutes = new Date(events[eventNumber].startTime);
             startTimeWithMoreMinutes.setMinutes(startTimeWithMoreMinutes.getMinutes() + 10);
-            startTimeWithMoreMinutes.setHours(startTimeWithMoreMinutes.getHours() - 3);
-            console.log("end " + endTimeWithMoreMinutes + "<=" + this.event.startTime);
-            console.log("start " + startTimeWithMoreMinutes + ">=" + this.event.endTime);
             if((endTimeWithMoreMinutes <= this.event.startTime) ||
               (startTimeWithMoreMinutes >= this.event.endTime)){
               continue;
@@ -123,32 +174,36 @@ export class EventFormComponent {
     return startDate >= endDate;
   }
 
-  fillFormElements(id: number){
-    this.eventService.getEvent(id).subscribe(data => {
-        this.event = data;
-      },
-      (error: HttpErrorResponse) => {
-        alert(error.message);
-      }, () => {
-      this.startTimeString = new Date(this.event.startTime).toISOString().substring(0, 16);
-      this.endTimeString = new Date(this.event.endTime).toISOString().substring(0, 16);
-      this.endTimeChange();
-      this.startTimeChange();
-      });
-  }
-
-  endTimeChange(){
-    this.event.endTime = new Date(this.endTimeString);
-  }
-
-  startTimeChange(){
-    this.event.startTime = new Date(this.startTimeString);
-  }
-
-  addThreeHours(date: Date): Date {
-    let newDate = new Date(date);
-    newDate.setHours(newDate.getHours() + 3);
-    return newDate;
+  private addNewEvent(){
+    this.event.lastVersion = true;
+    if (this.formOfChanges) {
+      if (this.event.initialState == 0) {
+        this.event.initialState = this.event.id;
+        this.cancelPreviousEvent();
+      }
+      else{
+        this.cancelPreviousEvent();
+      }
+    }
+    else{
+      this.event.initialState = 0;
+    }
+    this.event.creationTime = new Date();
+    this.event.id = 0;
+    this.event.name =this.event.name.trim();
+    this.event.applicant = this.event.applicant.trim();
+    this.event.participantsList = this.event.participantsList.trim();
+    this.eventService.addEvent(this.event).subscribe(result => {
+      this.gotoCalendar();
+      if (this.formOfChanges) {
+        alert("Событие было обновлено");
+      }
+      else{
+        alert("Событие было добавлено");
+      }
+    },(error: HttpErrorResponse) => {
+      alert(error.message);
+    });
   }
 
   cancelPreviousEvent(){
@@ -318,40 +373,6 @@ export class EventFormComponent {
     return result;
   }
 
-  private addNewEvent(){
-    this.event.lastVersion = true;
-    if (this.formOfChanges) {
-      if (this.event.initialState == 0) {
-        this.event.initialState = this.event.id;
-        this.cancelPreviousEvent();
-      }
-      else{
-        this.cancelPreviousEvent();
-      }
-    }
-    else{
-      this.event.initialState = 0;
-    }
-    this.event.creationTime = this.addThreeHours(new Date());
-    this.event.startTime = this.addThreeHours(this.event.startTime);
-    this.event.endTime = this.addThreeHours(this.event.endTime);
-    this.event.id = 0;
-    this.event.name =this.event.name.trim();
-    this.event.applicant = this.event.applicant.trim();
-    this.event.participantsList = this.event.participantsList.trim();
-    this.eventService.addEvent(this.event).subscribe(result => {
-      this.gotoCalendar();
-      if (this.formOfChanges) {
-        alert("Событие было обновлено");
-      }
-      else{
-        alert("Событие было добавлено");
-      }
-    },(error: HttpErrorResponse) => {
-      alert(error.message);
-    });
-  }
-
   checkName(): boolean {
     try{
       return this.event.name.trim() == "";
@@ -410,5 +431,44 @@ export class EventFormComponent {
        || this.checkOneDay() || this.checkName() || this.checkApplicant() || this.checkParticipantsList()
        || this.checkMeetingRoom() || this.checkPurpose() || this.checkStartTimeUsed() || this.checkEndTimeUsed();
   }
+
+  checkPreviousState(): boolean{
+    if(!this.formOfChanges || !this.eventStates){ return true;}
+    return this.currentStateNumber + 1 == this.eventStates.length;
+  }
+
+  checkNextState(): boolean{
+    if(!this.formOfChanges || !this.eventStates){ return true;}
+    return this.currentStateNumber == 0;
+  }
+
+  showPreviousState(){
+    this.currentStateNumber++;
+    this.event = this.copyEvent(this.eventStates[this.currentStateNumber]);
+    this.correctDateTimeElementValue();
+  }
+
+  showNextState(){
+    this.currentStateNumber--;
+    this.event = this.copyEvent(this.eventStates[this.currentStateNumber]);
+    this.correctDateTimeElementValue();
+  }
+
+  private copyEvent (event: Event): Event {
+    let eventCopy = new Event();
+    eventCopy.id = event.id;
+    eventCopy.startTime = event.startTime;
+    eventCopy.endTime = event.endTime;
+    eventCopy.name = event.name;
+    eventCopy.creationTime = event.creationTime;
+    eventCopy.purpose = event.purpose;
+    eventCopy.meetingRoom = event.meetingRoom;
+    eventCopy.initialState = event.initialState;
+    eventCopy.applicant = event.applicant;
+    eventCopy.participantsList = event.participantsList;
+    eventCopy.lastVersion = event.lastVersion;
+    return eventCopy;
+  }
+
 
 }
