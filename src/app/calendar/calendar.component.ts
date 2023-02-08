@@ -39,7 +39,6 @@ export class CalendarComponent {
     this.meetingRoomSelected = 1;
   }
 
-
   ngOnInit() {
     this.getMeetingRoomsFromDB();
     let button = document.getElementById("buttonFillCalendar");
@@ -92,7 +91,6 @@ export class CalendarComponent {
     );
   }
 
-
   private checkEvents(){
     if(this.events.length > 0){
       for(let eventNumber = 0; eventNumber < this.events.length; eventNumber++){
@@ -129,7 +127,12 @@ export class CalendarComponent {
     let cell = document.getElementById(String(cellNumber));
     if(cell){
       if(cell.style.backgroundColor != "white"){
-        cell.innerText = "2";
+        if(cell.innerText == ""){
+          cell.innerText = "2";
+        }
+        else{
+          cell.innerText = String(Number(cell.innerText) + 1);
+        }
       }
       cell.style.backgroundColor = CalendarComponent.coloursArray[(CalendarComponent.nextColour
                                                                 % CalendarComponent.coloursArray.length)];
@@ -215,14 +218,16 @@ export class CalendarComponent {
   }
 
   cancelEvent(){
-    this.eventService.updateEventLastVersion(this.eventSelected.id).subscribe(data => {
-        alert("Событие было удалено");
-        this.hideEventDetails();
-        this.clearCells();
-      },
-      (error: HttpErrorResponse) => {
-        alert(error.message);
-      })
+    if(confirm("Отменить выбранное событие?")) {
+      this.eventService.updateEventLastVersion(this.eventSelected.id).subscribe(data => {
+          alert("Событие было удалено");
+          this.hideEventDetails();
+          this.clearCells();
+        },
+        (error: HttpErrorResponse) => {
+          alert(error.message);
+        });
+    }
   }
 
 }

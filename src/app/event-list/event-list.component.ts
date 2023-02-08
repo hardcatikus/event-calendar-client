@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {Event} from "../model/event";
 import {EventService} from "../service/event.service";
 import {HttpErrorResponse} from "@angular/common/http";
+import {EventDTO} from "../dto/event-dto";
 
 @Component({
   selector: 'app-event-list',
@@ -10,19 +10,25 @@ import {HttpErrorResponse} from "@angular/common/http";
 })
 export class EventListComponent implements OnInit{
 
-  events!: Event[];
+  events!: EventDTO[];
 
   constructor(private eventService: EventService) {
   }
 
   ngOnInit() {
-    this.eventService.getAllEvents().subscribe(data => {
+    this.eventService.getAllRelevantEvents().subscribe(data => {
       this.events = data;
     },
       (error: HttpErrorResponse) => {
         alert(error.message);
       }
     );
+  }
+
+  getEventDate(event:EventDTO): string{
+    let result: string = '';
+    result = event.startTime + "-" + event.endTime.substring(12,17);
+    return result;
   }
 
 }

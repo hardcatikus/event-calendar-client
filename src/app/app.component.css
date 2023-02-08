@@ -1,0 +1,25 @@
+a {
+  background-color: #4682b4;
+  outline-color: #4682b4;
+  border-color: #4682b4;
+}
+
+a:hover {
+  background-color: #386890;
+  outline-color: #386890;
+  border-color: #386890;
+}
+
+a:focus {
+  outline: thin dotted;
+}
+
+div.block {
+  width: 100%;
+  max-width: 1200px;
+  min-width: 800px;
+  border: 0 solid transparent;
+  border-width: 0 20px;
+  margin: 0 auto 20px;
+  box-sizing: border-box;
+}

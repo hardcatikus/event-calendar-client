@@ -2,15 +2,15 @@
   <div class="card-body">
     <form (ngSubmit)="onSubmit()" #eventForm="ngForm">
       <div class="form-group">
-        <table style="border-collapse: collapse; width: 100%; height: 275px; border: none; ">
+        <table>
           <tbody>
-          <tr style="height: 30px;">
-            <td style="width: 25%; height: 30px;">
+          <tr>
+            <td class="header">
               <div class="form-group">
                 <label for="name">Название</label>
               </div>
             </td>
-            <td style="width: 75%; height: 30px;" colspan="3">
+            <td class="attribute_value" colspan="3">
               <div class="form-group">
                 <input type="text" [(ngModel)]="event.name"
                         class="form-control"
@@ -22,13 +22,13 @@
               </div>
             </td>
           </tr>
-          <tr style="height: 30px;">
-            <td style="width: 25%; height: 30px;">
+          <tr>
+            <td class="header">
               <div class="form-group">
                 <label for="startTime">Время начала события</label>
               </div>
             </td>
-            <td style="width: 75%; height: 30px;" colspan="3">
+            <td class="attribute_value" colspan="3">
               <div class="form-group">
                 <input type="datetime-local" [(ngModel)]="startTimeString"
                        class="form-control"
@@ -40,13 +40,13 @@
               </div>
             </td>
           </tr>
-          <tr style="height: 30px;">
-            <td style="width: 25%; height: 30px;">
+          <tr>
+            <td class="header">
               <div class="form-group">
                 <label for="endTime">Время конца события</label>
               </div>
             </td>
-            <td style="width: 75%; height: 30px;" colspan="3">
+            <td class="attribute_value" colspan="3">
               <div class="form-group">
                 <input type="datetime-local" [(ngModel)]="endTimeString"
                        class="form-control"
@@ -58,13 +58,13 @@
               </div>
             </td>
           </tr>
-          <tr style="height: 30px;">
-            <td style="width: 25%; height: 30px;">
+          <tr>
+            <td class="header">
               <div class="form-group">
                 <label for="purpose">Цель события</label>
               </div>
             </td>
-            <td style="width: 25%; height: 30px;">
+            <td class="attribute_value_small">
               <div class="form-group">
                 <select [(ngModel)]="event.purpose"
                         class="form-control"
@@ -78,7 +78,7 @@
                 </select>
               </div>
             </td>
-            <td style="width: 25%; height: 30px;">
+            <td class="attribute_value_small">
               <div class="form-group">
                 <input type="text"
                        class="form-control"
@@ -90,24 +90,25 @@
                        (change)="checkNewPurposeContent()">
               </div>
             </td>
-            <td style="width: 25%; height: 30px;">
+            <td class="attribute_value_button">
               <div class="form-group">
                 <button type="button"
                         id = "new-purpose-button"
+                        class="attribute"
                         hidden
                         (click)="createNewPurpose()">
-                  Сохранить новую цель
+                  Добавить цель
                 </button>
               </div>
             </td>
           </tr>
-          <tr style="height: 30px;">
-            <td style="width: 25%; height: 30px;">
+          <tr>
+            <td class="header">
               <div class="form-group">
                 <label for="meetingRoom">Место события</label>
               </div>
             </td>
-            <td style="width: 25%; height: 30px;">
+            <td class="attribute_value_small">
               <div class="form-group">
                 <select [(ngModel)]="event.meetingRoom"
                         class="form-control"
@@ -122,7 +123,7 @@
                 </select>
               </div>
             </td>
-            <td style="width: 25%; height: 30px;">
+            <td class="attribute_value_small">
               <div class="form-group">
                 <input type="text"
                        class="form-control"
@@ -134,24 +135,25 @@
                        (change)="checkNewMeetingRoomContent()">
               </div>
             </td>
-            <td style="width: 25%; height: 30px;">
+            <td class="attribute_value_button">
               <div class="form-group">
                 <button type="button"
                         id = "new-room-button"
+                        class="attribute"
                         hidden
                         (click)="createNewMeetingRoom()">
-                  Сохранить новое место
+                  Добавить место
                 </button>
               </div>
             </td>
           </tr>
-          <tr style="height: 30px;">
-            <td style="width: 25%; height: 30px;">
+          <tr>
+            <td class="header">
               <div class="form-group">
                 <label for="applicant">Организатор</label>
               </div>
             </td>
-            <td style="width: 75%; height: 30px;" colspan="3">
+            <td class="attribute_value" colspan="3">
               <div class="form-group">
                 <input type="text" [(ngModel)]="event.applicant"
                        class="form-control"
@@ -163,13 +165,13 @@
               </div>
             </td>
           </tr>
-          <tr style="height: 65px;">
-            <td style="width: 25%; height: 30px;">
+          <tr>
+            <td class="header_participants">
               <div class="form-group">
                 <label for="participantsList">Список участников</label>
               </div>
             </td>
-            <td style="width: 75%; height: 30px;" colspan="3">
+            <td class="attribute_value" colspan="3">
               <div class="form-group">
                 <textarea [(ngModel)]="event.participantsList"
                           class="form-control"
@@ -183,33 +185,37 @@
               </div>
             </td>
           </tr>
-          <tr style="height: 30px;">
-            <td style="text-align: center; width: 25%; height: 30px;">
+          <tr>
+            <td class="bottom">
               <a routerLink="/calendar" class="btn btn-info">Отменить</a>
             </td>
-            <td style="text-align: center; width: 25%; height: 30px;">
+            <td class="bottom">
               <button type="button"
+                      class="state"
                       id="previous-state-button"
                       [disabled]="checkPreviousState()"
                       [hidden]="!formOfChanges"
                       (click)="showPreviousState()">
                 Предыдущие изменения
               </button></td>
-            <td style="text-align: center; width: 25%; height: 30px;">
+            <td class="bottom">
               <button type="button"
+                      class="state"
+                      id="next-state-button"
                       [disabled]="checkNextState()"
                       [hidden]="!formOfChanges"
                       (click)="showNextState()">
                 Последующие изменения
               </button>
             </td>
-            <td style="text-align: center; width: 25%; height: 30px;">
+            <td class="bottom">
               <button type="submit" [disabled]="!(eventForm.form.valid) || checkAllFields()"
                       class="btn btn-info">Сохранить</button>
             </td>
           </tr>
           </tbody>
         </table>
+        <br>
         <div [hidden]="!checkName()" class="alert alert-danger">Необходимо указать название события!</div>
         <div [hidden]="!checkStartTimeUsed()" class="alert alert-danger">Необходимо указать время начала события!</div>
         <div [hidden]="!checkEndTimeUsed()" class="alert alert-danger">Необходимо указать время конца события!</div>

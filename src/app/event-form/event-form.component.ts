@@ -70,15 +70,6 @@ export class EventFormComponent {
       });
   }
 
-  private fillArrayEventStates(initialState: number){
-    this.eventService.getAllEventStates(initialState).subscribe(data=>{
-        this.eventStates = data;
-        this.currentStateNumber = 0;
-      },
-      (error: HttpErrorResponse) => {
-        alert(error.message);
-      });
-  }
   private correctDateTimeElementValue(){
     this.startTimeString = this.dateToString(this.event.startTime);
     this.endTimeString = this.dateToString(this.event.endTime);
@@ -125,6 +116,16 @@ export class EventFormComponent {
   }
 
   onSubmit(){
+    if(this.formOfChanges){
+      if(!confirm("Обновить запись о событии?")){
+        return;
+      }
+    }
+    else {
+      if(!confirm("Добавить новую запись о событии?")){
+        return;
+      }
+    }
     let result: boolean = false;
     let stringDate: string = this.event.startTime.getFullYear() + "-" +
       (this.event.startTime.getMonth() + 1)  + "-" + this.event.startTime.getDate();
@@ -133,10 +134,7 @@ export class EventFormComponent {
       stringDate).subscribe(data => {
         events = data;
         for(let eventNumber = 0; eventNumber < events.length; eventNumber++){
-          if(this.event.id == events[eventNumber].id){
-            continue;
-          }
-          else {
+          if(this.event.id != events[eventNumber].id){
             let endTimeWithMoreMinutes = new Date(events[eventNumber].endTime);
             endTimeWithMoreMinutes.setMinutes(endTimeWithMoreMinutes.getMinutes() - 10);
             let startTimeWithMoreMinutes = new Date(events[eventNumber].startTime);

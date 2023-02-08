@@ -1,0 +1,17 @@
+.table .thead-dark th {
+  background-color: #4682b4;
+  color: white;
+}
+
+.table thead th {
+  text-align: center;
+  border-bottom: 1px solid #32383e;
+}
+
+div{
+  table-layout: fixed;
+}
+
+td {
+  width: 14%;
+}

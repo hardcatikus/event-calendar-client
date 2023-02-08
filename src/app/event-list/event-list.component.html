@@ -3,32 +3,22 @@
     <table class="table table-bordered table-striped">
       <thead class="thead-dark">
       <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Start Time</th>
-        <th scope="col">End Time</th>
-        <th scope="col">Name</th>
-        <th scope="col">Creation Time</th>
-        <th scope="col">Purpose</th>
-        <th scope="col">Meeting Room</th>
-        <th scope="col">Initial State</th>
-        <th scope="col">Applicant</th>
-        <th scope="col">Participants List</th>
-        <th scope="col">Last Version</th>
+        <th scope="col">Название</th>
+        <th scope="col">Время</th>
+        <th scope="col">Цель</th>
+        <th scope="col">Место</th>
+        <th scope="col">Организатор</th>
+        <th scope="col">Участники</th>
       </tr>
       </thead>
       <tbody>
       <tr *ngFor="let event of events">
-        <td>{{ event.id }}</td>
-        <td>{{ event.startTime }}</td>
-        <td>{{ event.endTime }}</td>
         <td>{{ event.name }}</td>
-        <td>{{ event.creationTime }}</td>
+        <td>{{ getEventDate(event) }}</td>
         <td>{{ event.purpose }}</td>
         <td>{{ event.meetingRoom }}</td>
-        <td>{{ event.initialState }}</td>
         <td>{{ event.applicant }}</td>
         <td>{{ event.participantsList }}</td>
-        <td>{{ event.lastVersion }}</td>
       </tr>
       </tbody>
     </table>
