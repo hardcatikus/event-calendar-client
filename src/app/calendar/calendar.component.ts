@@ -11,15 +11,18 @@ import {PurposeService} from "../service/purpose.service";
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css']
+  styleUrls: ['./calendar.component.css'],
 })
 export class CalendarComponent {
 
   meetingRoomSelected: number;
-  dateSelected!: Date;
+  dateSelected: string;
+  cellSelectedTime: string;
   eventSelected!: Event;
   events!: Event [];
   meetingRooms!: MeetingRoom [];
+  detailsList: string [] = [];
+  eventSelectedIdList: number [] = [];
   eventSelectedMeetingRoom!: MeetingRoom;
   eventSelectedPurpose!: Purpose;
   static nextColour: number = 0;
@@ -36,26 +39,20 @@ export class CalendarComponent {
     private meetingRoomService: MeetingRoomService,
     private purposeService: PurposeService
   ) {
-    this.meetingRoomSelected = 1;
+    this.cellSelectedTime = "08:00";
+    this.meetingRoomSelected = 100;
+    this.dateSelected = this.dateToString(new Date());
   }
 
   ngOnInit() {
     this.getMeetingRoomsFromDB();
-    let button = document.getElementById("buttonFillCalendar");
-    if(button){
-      button.setAttribute("disabled","true");
-    }
     this.hideEventDetails();
-  }
-
-  enableButton(){
-    let button = document.getElementById("buttonFillCalendar");
-    if(button){
-      button.removeAttribute("disabled");
-    }
+    this.fillCalendar();
   }
 
   fillCalendar(){
+    this.detailsList = [];
+    this.eventSelectedIdList = [];
     this.hideEventDetails();
     this.clearCells();
     if(this.meetingRoomSelected == 100){
@@ -127,6 +124,8 @@ export class CalendarComponent {
     let cell = document.getElementById(String(cellNumber));
     if(cell){
       if(cell.style.backgroundColor != "white"){
+        cell.setAttribute("value",cell.getAttribute("value")
+          + "," + String(eventId));
         if(cell.innerText == ""){
           cell.innerText = "2";
         }
@@ -134,9 +133,11 @@ export class CalendarComponent {
           cell.innerText = String(Number(cell.innerText) + 1);
         }
       }
+      else{
+        cell.setAttribute("value",String(eventId));
+      }
       cell.style.backgroundColor = CalendarComponent.coloursArray[(CalendarComponent.nextColour
                                                                 % CalendarComponent.coloursArray.length)];
-      cell.setAttribute("value",String(eventId));
     }
   }
 
@@ -153,20 +154,28 @@ export class CalendarComponent {
   }
 
   showEventDetails(clickEvent: MouseEvent) {
-    if(this.meetingRoomSelected == 100){
-      return;
-    }
+    this.detailsList = [];
+    this.eventSelectedIdList = [];
     let clickTarget = clickEvent.target as HTMLElement;
+    this.cellSelectedTime = this.getCellTime(Number(clickTarget.id));
     if (clickTarget.style.backgroundColor == "white" ||
         !clickTarget.getAttribute("value")) {
       this.hideEventDetails();
+      this.goToEventFormWithTime();
       return;
     }
-    let detailsTr = document.getElementById("eventDetailsTr");
+    let detailsTr = document.getElementById("bottomButtonTr");
     if (detailsTr) {
       detailsTr.removeAttribute("hidden");
     }
-    this.eventService.getEvent(Number(clickTarget.getAttribute("value"))).subscribe(data => {
+    // @ts-ignore
+    this.eventSelectedIdList = clickTarget.getAttribute("value").split(',').map(Number);
+    this.fillEventDetails(this.eventSelectedIdList,0);
+  }
+
+  private fillEventDetails(eventIDArray: number[], index: number){
+    let eventID: number = eventIDArray[index];
+    this.eventService.getEvent(eventID).subscribe(data => {
         this.eventSelected = data;
       },
       (error: HttpErrorResponse) => {
@@ -184,16 +193,19 @@ export class CalendarComponent {
               (error: HttpErrorResponse) => {
                 alert(error.message);
               }, () => {
-                let detailsP = document.getElementById("eventDetailsP");
-                if (detailsP) {
-                  detailsP.innerHTML = "Название: " + this.eventSelected.name + "<br>"
-                    + "Время начала события: " + this.dateToLocalString(this.eventSelected.startTime) + "<br>"
-                    + "Время конца события: " + this.dateToLocalString(this.eventSelected.endTime) + "<br>"
-                    + "Цель события: " + this.eventSelectedPurpose.name + "<br>"
-                    + "Место события: " + this.eventSelectedMeetingRoom.name + "<br>"
-                    + "Организатор события: " + this.eventSelected.applicant + "<br>"
-                    + "Участники события: " + this.eventSelected.participantsList + "<br>"
-                    + "Время создания события: " + this.dateToLocalString(this.eventSelected.creationTime);
+                let detailsString: string;
+                detailsString = "Название: " + this.eventSelected.name + "<br>"
+                  + "Время начала события: " + this.dateToLocalString(this.eventSelected.startTime) + "<br>"
+                  + "Время конца события: " + this.dateToLocalString(this.eventSelected.endTime) + "<br>"
+                  + "Цель события: " + this.eventSelectedPurpose.name + "<br>"
+                  + "Место события: " + this.eventSelectedMeetingRoom.name + "<br>"
+                  + "Организатор события: " + this.eventSelected.applicant + "<br>"
+                  + "Участники события: " + this.eventSelected.participantsList + "<br>"
+                  + "Время создания события: " + this.dateToLocalString(this.eventSelected.creationTime);
+                this.detailsList.push(detailsString);
+                ++index;
+                if (index < eventIDArray.length) {
+                  this.fillEventDetails(eventIDArray, index);
                 }
               })
           })
@@ -201,8 +213,12 @@ export class CalendarComponent {
     );
   }
 
+  identify(index: number, item: string){
+    return item;
+  }
+
   private hideEventDetails(){
-    let details = document.getElementById("eventDetailsTr");
+    let details = document.getElementById("bottomButtonTr");
     if(details){
       details.setAttribute("hidden","true");
     }
@@ -213,21 +229,72 @@ export class CalendarComponent {
     return newDate.toLocaleString();
   }
 
-  goToEventForm(){
-    this.router.navigate(['/event/add'], {queryParams: {eventId: this.eventSelected.id}});
+  goToEventFormWithId(indexId: number){
+    this.router.navigate(['/event/add'],
+      {queryParams: {eventId: this.eventSelectedIdList[indexId]}});
   }
 
-  cancelEvent(){
+  goToEventFormWithTime(){
+    let startDate: string;
+    startDate = this.dateSelected + "T" + this.cellSelectedTime;
+    this.router.navigate(['/event/add'], {queryParams: {startDate: startDate}});
+  }
+
+  goToEventFormWithDefaultTime(){
+    let startDate: string;
+    startDate = this.dateSelected + "T08:00";
+    this.router.navigate(['/event/add'], {queryParams: {startDate: startDate}});
+  }
+
+  private getCellTime(cellId: number): string{
+    let cellHours: string;
+    let cellMinutes: string;
+    if(cellId % 6 != 0){
+      cellMinutes = (cellId % 6 - 1) + "0";
+      cellHours = String(Math.floor(cellId / 6) + 8);
+    }
+    else {
+      cellMinutes = "50";
+      cellHours = String(Math.floor(cellId / 6) + 7);
+    }
+    if(cellHours.length == 1) {
+      cellHours = "0" + cellHours;
+    }
+    return cellHours + ":" + cellMinutes;
+  }
+
+  cancelEvent(indexId: number){
     if(confirm("Отменить выбранное событие?")) {
-      this.eventService.updateEventLastVersion(this.eventSelected.id).subscribe(data => {
+      this.eventService.updateEventLastVersion(this.eventSelectedIdList[indexId]).subscribe(data => {
           alert("Событие было удалено");
           this.hideEventDetails();
           this.clearCells();
+          this.fillCalendar();
         },
         (error: HttpErrorResponse) => {
           alert(error.message);
         });
     }
+  }
+
+  private dateToString(date: Date): string {
+    let result: string;
+    result = new Date(date).toISOString().substring(0, 10);
+    return result;
+  }
+
+  changeDatePreviousDay(){
+    let changedDate: Date = new Date(this.dateSelected);
+    changedDate.setDate(changedDate.getDate() - 1);
+    this.dateSelected = this.dateToString(changedDate);
+    this.fillCalendar();
+  }
+
+  changeDateNextDay(){
+    let changedDate: Date = new Date(this.dateSelected);
+    changedDate.setDate(changedDate.getDate() + 1);
+    this.dateSelected = this.dateToString(changedDate);
+    this.fillCalendar();
   }
 
 }

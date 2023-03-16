@@ -1,0 +1,142 @@
+<div class="card my-5">
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead class="thead-dark">
+      <tr>
+        <th scope="col">Настройки записей о событиях</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class="event">
+          <button type="button"
+                  class="event"
+                  id="event-deletion"
+                  (click)="deleteObsoleteData()">
+            Удалить записи старше одной недели
+          </button>
+        </td>
+        <td class="event-blank"></td>
+      </tr>
+      </tbody>
+    </table>
+    <table class="table table-bordered">
+      <thead class="thead-dark">
+      <tr>
+        <th scope="col">Настройки записей о местах событий</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class="left-cell">
+          <p>Удаление места событий</p>
+        </td>
+        <td class="central-cell">
+            <select [(ngModel)]="meetingRoomSelectedId"
+                    class="form-control"
+                    id="meetingRoom"
+                    name="meetingRoom"
+                    required #meetingRoom="ngModel">
+              <option [ngValue]=0 disabled selected>Выберете место события</option>
+              <option *ngFor="let meetingRoom of meetingRooms" [ngValue]="meetingRoom.id">
+                {{meetingRoom.name}}</option>
+            </select>
+        </td>
+        <td class="right-cell">
+          <button type="button"
+                  class="attribute"
+                  id="room-deletion"
+                  (click)="deleteMeetingRoom()"
+                  [disabled]="checkMeetingRoomSelectedId()">
+            Удалить место событий
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td class="left-cell">
+          <p>Добавление места событий</p>
+        </td>
+        <td class="central-cell">
+            <input type="text"
+                   class="form-control"
+                   id="new-room-text"
+                   placeholder="Введите новое место"
+                   maxlength="50"
+                   size="30"
+                   (change)="checkNewMeetingRoomContent()"
+                   (keypress)="checkNewMeetingRoomContent()"
+                   (paste)="checkNewMeetingRoomContent()"
+                   (input)="checkNewMeetingRoomContent()">
+        </td>
+        <td class="right-cell">
+            <button type="button"
+                    id = "new-room-button"
+                    class="attribute"
+                    (click)="createNewMeetingRoom()">
+              Добавить новое место
+            </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <table class="table table-bordered">
+      <thead class="thead-dark">
+      <tr>
+        <th scope="col">Настройки записей о целях событий</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class="left-cell">
+          <p>Удаление цели событий</p>
+        </td>
+        <td class="central-cell">
+          <select [(ngModel)]="purposeSelectedId"
+                  class="form-control"
+                  id="purpose"
+                  name="purpose"
+                  required #purpose="ngModel">
+            <option [ngValue]=0 disabled selected>Выберете цель события</option>
+            <option *ngFor="let purpose of purposes" [ngValue]="purpose.id">
+              {{purpose.name}}</option>
+          </select>
+        </td>
+        <td class="right-cell">
+          <button type="button"
+                  class="attribute"
+                  id="purpose-deletion"
+                  (click)="deletePurpose()"
+                  [disabled]="checkPurposeSelectedId()">
+            Удалить цель событий
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td class="left-cell">
+          <p>Добавление цели событий</p>
+        </td>
+        <td class="central-cell">
+            <input type="text"
+                   class="form-control"
+                   id="new-purpose-text"
+                   placeholder="Введите новую цель"
+                   maxlength="50"
+                   size="30"
+                   (change)="checkNewPurposeContent()"
+                   (keypress)="checkNewPurposeContent()"
+                   (paste)="checkNewPurposeContent()"
+                   (input)="checkNewPurposeContent()">
+        </td>
+        <td class="right-cell">
+            <button type="button"
+                    id = "new-purpose-button"
+                    class="attribute"
+                    (click)="createNewPurpose()">
+              Добавить новую цель
+            </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

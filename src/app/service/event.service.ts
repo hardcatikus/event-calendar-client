@@ -13,7 +13,7 @@ export class EventService {
   constructor(private http: HttpClient) {
     this.eventURL = environment.apiBaseUrl;
   }
-
+//eventcalendar/
   public getAllEvents(): Observable<Event[]>{
     return this.http.get<Event[]>(this.eventURL + 'rest/event/all');
   }
@@ -29,23 +29,24 @@ export class EventService {
   public getAllEventsByMeetingRoomAndDate(meetingRoom: number, dayStart: string): Observable<Event[]> {
     let params = new HttpParams().set("meetingRoom", meetingRoom)
       .set("dayStart", dayStart);
-    return this.http.get<Event[]>(this.eventURL +
-      'rest/event/allByMeetingRoomAndDay', {params: params});
+    return this.http.get<Event[]>(this.eventURL + 'rest/event/allByMeetingRoomAndDay',
+      {params: params});
   }
 
   public updateEventLastVersion(id: number): Observable<String> {
     return this.http.patch<String>(this.eventURL + 'rest/event/' + id, {});
   }
 
-  public getAllEventsByDate(dayStart: Date): Observable<Event[]> {
+  public getAllEventsByDate(dayStart: string): Observable<Event[]> {
     let params = new HttpParams().set("dayStart", String(dayStart));
-    return this.http.get<Event[]>(this.eventURL +
-      'rest/event/allByDay', {params: params});
+    return this.http.get<Event[]>(this.eventURL + 'rest/event/allByDay',
+      {params: params});
   }
 
   public getAllEventStates(id: number): Observable<Event[]> {
     let params = new HttpParams().set("id", id);
-    return  this.http.get<Event[]>(this.eventURL + 'rest/event/allStates', {params:params});
+    return  this.http.get<Event[]>(this.eventURL + 'rest/event/allStates',
+      {params:params});
   }
 
   public getAllRelevantEvents(): Observable<EventDTO[]> {
@@ -53,7 +54,16 @@ export class EventService {
     let currentDate = new Date();
     stringDate = currentDate.getFullYear() + "-" + (Number(currentDate.getMonth()) + 1) + "-" + currentDate.getDate();
     let params = new HttpParams().set("date", stringDate);
-    return this.http.get<EventDTO[]>(this.eventURL + 'rest/event/allRelevant', {params:params});
+    return this.http.get<EventDTO[]>(this.eventURL + 'rest/event/allRelevant',
+      {params:params});
+  }
+
+  public deleteObsoleteEvents(): Observable<String> {
+    let stringDate: string;
+    let currentDate = new Date();
+    stringDate = currentDate.getFullYear() + "-" + (Number(currentDate.getMonth()) + 1) + "-" + currentDate.getDate();
+    let params = new HttpParams().set("currentDate", stringDate);
+    return this.http.delete<String>(this.eventURL + 'rest/event/allObsolete', {params:params});
   }
 
 }

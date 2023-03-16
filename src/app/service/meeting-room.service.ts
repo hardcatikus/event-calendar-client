@@ -12,7 +12,7 @@ export class MeetingRoomService {
   constructor(private http: HttpClient) {
     this.eventURL = environment.apiBaseUrl;
   }
-
+//eventcalendar/
   public getAllMeetingRooms(): Observable<MeetingRoom[]>{
     return this.http.get<MeetingRoom[]>(this.eventURL + 'rest/meeting-room/all');
   }
@@ -23,6 +23,10 @@ export class MeetingRoomService {
 
   public addMeetingRoom(meetingRoom: MeetingRoom): Observable<MeetingRoom>{
     return this.http.post<MeetingRoom>(this.eventURL + 'rest/meeting-room/add', meetingRoom);
+  }
+
+  public deleteMeetingRoom(id: number): Observable<String> {
+    return this.http.delete<String>(this.eventURL + 'rest/meeting-room/' + id);
   }
 
 }

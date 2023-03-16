@@ -11,13 +11,15 @@ import {FormsModule} from "@angular/forms";
 import { CalendarComponent } from './calendar/calendar.component';
 import {MeetingRoomService} from "./service/meeting-room.service";
 import {PurposeService} from "./service/purpose.service";
+import { AdminComponent } from './admin/admin.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     EventListComponent,
     EventFormComponent,
-    CalendarComponent
+    CalendarComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,

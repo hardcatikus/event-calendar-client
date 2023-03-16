@@ -34,6 +34,11 @@ td.under_calendar {
   height: 100px;
 }
 
+td.under_calendar_add {
+  border-color: white;
+  height: 100px;
+}
+
 a {
   background-color: #4682b4;
   outline-color: #4682b4;
@@ -83,4 +88,13 @@ p.details_header {
 
 p.details {
   padding: 10px;
+}
+
+button.bottom-button {
+  text-align: center;
+  width: 40%;
+}
+
+tr.bottom-button {
+  border-color: white;
 }

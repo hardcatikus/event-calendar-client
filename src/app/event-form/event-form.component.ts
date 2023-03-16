@@ -17,6 +17,7 @@ export class EventFormComponent {
 
   startTimeString!: string;
   endTimeString!: string;
+  duration!: number;
   event: Event;
   meetingRooms!: MeetingRoom [];
   purposes!: Purpose [];
@@ -35,9 +36,15 @@ export class EventFormComponent {
     this.formOfChanges = false;
     this.route.queryParams.subscribe((queryParams:any) => {
       let id = queryParams.eventId;
+      let startDate: string = queryParams.startDate;
       if(id){
+        this.duration = 0;
         this.fillFormElements(id);
         this.formOfChanges = true;
+      }
+      if(startDate){
+        this.duration = 60;
+        this.fillDates(startDate);
       }
     })
   }
@@ -45,6 +52,11 @@ export class EventFormComponent {
   ngOnInit() {
     this.fillMeetingRoomList();
     this.fillPurposeList();
+  }
+
+  private calculateDuration(){
+    this.duration = (new Date(this.event.endTime).getTime()
+      - new Date(this.event.startTime).getTime()) / 1000 / 60;
   }
 
   fillFormElements(id: number){
@@ -71,10 +83,9 @@ export class EventFormComponent {
   }
 
   private correctDateTimeElementValue(){
-    this.startTimeString = this.dateToString(this.event.startTime);
-    this.endTimeString = this.dateToString(this.event.endTime);
-    this.endTimeChange();
-    this.startTimeChange();
+    this.setStartTimeElementValue();
+    this.calculateDuration();
+    this.setEndTimeElementValue();
   }
 
   private dateToString(date: Date): string {
@@ -87,10 +98,12 @@ export class EventFormComponent {
 
   endTimeChange(){
     this.event.endTime = new Date(this.endTimeString);
+    this.calculateDuration();
   }
 
   startTimeChange(){
     this.event.startTime = new Date(this.startTimeString);
+    this.setEndTimeElementValue();
   }
 
   private fillMeetingRoomList(){
@@ -208,7 +221,7 @@ export class EventFormComponent {
     this.eventService.updateEventLastVersion(this.event.id).subscribe(data => {},
       (error: HttpErrorResponse) => {
         alert(error.message);
-      })
+      });
   }
 
   checkOtherPurpose() {
@@ -269,6 +282,7 @@ export class EventFormComponent {
     this.purposeService.addPurpose(newPurpose).subscribe(result => {
       this.fillPurposeList();
       alert("Новая цель добавлена");
+      this.checkOtherPurpose();
     },(error: HttpErrorResponse) => {
         alert(error.message);
       });
@@ -332,6 +346,7 @@ export class EventFormComponent {
     this.meetingRoomService.addMeetingRoom(newMeetingRoom).subscribe(result => {
       this.fillMeetingRoomList();
       alert("Новое место добавлено");
+      this.checkOtherMeetingRoom();
     },(error: HttpErrorResponse) => {
       alert(error.message);
     });
@@ -441,14 +456,22 @@ export class EventFormComponent {
   }
 
   showPreviousState(){
+    let lastId: number = this.event.id;
+    let lastState: number = this.event.initialState;
     this.currentStateNumber++;
     this.event = this.copyEvent(this.eventStates[this.currentStateNumber]);
+    this.event.id = lastId;
+    this.event.initialState = lastState;
     this.correctDateTimeElementValue();
   }
 
   showNextState(){
+    let lastId: number = this.event.id;
+    let lastState: number = this.event.initialState;
     this.currentStateNumber--;
     this.event = this.copyEvent(this.eventStates[this.currentStateNumber]);
+    this.event.id = lastId;
+    this.event.initialState = lastState;
     this.correctDateTimeElementValue();
   }
 
@@ -468,5 +491,77 @@ export class EventFormComponent {
     return eventCopy;
   }
 
+  isNumberKey(evt: KeyboardEvent): boolean {
+    let charCode = (evt.which) ? evt.which : evt.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57)){
+      return false;
+    }
+    this.setEndTimeElementValue();
+    return true;
+  }
+
+  addMinutes() {
+    this.duration += 10;
+    this.setEndTimeElementValue();
+  }
+
+  subtractMinutes() {
+    this.duration -= 10;
+    this.setEndTimeElementValue();
+  }
+
+  checkDuration():boolean {
+    return this.duration < 10;
+  }
+
+  private fillDates(startDate: string){
+    this.event.startTime = new Date(startDate);
+    this.startTimeString = startDate;
+    this.setEndTimeElementValue();
+  }
+
+  setEndTimeElementValue(){
+    this.event.endTime = new Date(this.startTimeString);
+    this.event.endTime.setMinutes(this.event.endTime.getMinutes() + this.duration);
+    this.event.endTime = new Date(this.event.endTime);
+    if(this.event.endTime.getHours() >= 10){
+        this.endTimeString = this.dateToString(this.event.endTime);
+    }
+    else {
+      if(Number(new Date(this.event.endTime).toISOString().substring(11, 13)) >= 21){
+        this.endTimeString = (new Date(this.event.endTime).toISOString().substring(0, 11)) +  "0" +
+          (String(Number(new Date(this.event.endTime).toISOString().substring(11, 13))-21)) +
+          (new Date(this.event.endTime).toISOString().substring(13, 16));
+      }
+      else {
+        this.endTimeString = (new Date(this.event.endTime).toISOString().substring(0, 11)) +  "0" +
+          (String(Number(new Date(this.event.endTime).toISOString().substring(11, 13))+3)) +
+          (new Date(this.event.endTime).toISOString().substring(13, 16));
+      }
+    }
+  }
+
+  setStartTimeElementValue(){
+    this.event.startTime = new Date(this.event.startTime);
+    if(this.event.startTime.getHours() >= 10){
+      this.startTimeString = this.dateToString(this.event.startTime);
+    }
+    else {
+      if(Number(new Date(this.event.startTime).toISOString().substring(11, 13)) >= 21){
+        this.startTimeString = (new Date(this.event.startTime).toISOString().substring(0, 11)) +  "0" +
+          (String(Number(new Date(this.event.startTime).toISOString().substring(11, 13))-21)) +
+          (new Date(this.event.startTime).toISOString().substring(13, 16));
+      }
+      else {
+        this.startTimeString = (new Date(this.event.startTime).toISOString().substring(0, 11)) +  "0" +
+          (String(Number(new Date(this.event.startTime).toISOString().substring(11, 13))+3)) +
+          (new Date(this.event.startTime).toISOString().substring(13, 16));
+      }
+    }
+  }
+
+  checkDurationMinutes(){
+    return this.duration < 10;
+  }
 
 }

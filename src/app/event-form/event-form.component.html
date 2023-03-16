@@ -1,4 +1,4 @@
-<div class="card my-5">
+<div class="card my-5" xmlns="http://www.w3.org/1999/html">
   <div class="card-body">
     <form (ngSubmit)="onSubmit()" #eventForm="ngForm">
       <div class="form-group">
@@ -31,12 +31,52 @@
             <td class="attribute_value" colspan="3">
               <div class="form-group">
                 <input type="datetime-local" [(ngModel)]="startTimeString"
-                       class="form-control"
+                       class="form-control time-input"
                        id="startTime"
                        name="startTime"
                        placeholder="Введите время начала события"
                        required #startTime="ngModel"
                        (change)="startTimeChange()">
+                <button type="button"
+                        id = "accept-button"
+                        class="accept">
+                  Принять
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="header">
+              <div class="form-group">
+                <label for="endTime">Продолжительность события</label>
+              </div>
+            </td>
+            <td class="attribute_value_small" colspan="3">
+              <div class="form-group">
+                <input [(ngModel)]="duration"
+                       name="duration"
+                       type="number"
+                       class="duration"
+                       step="5"
+                       min="10"
+                       (keypress)="isNumberKey($event)"
+                       (change)="setEndTimeElementValue()"
+                       (paste)="setEndTimeElementValue()"
+                       (input)="setEndTimeElementValue()">
+                минут
+                <button type="button"
+                        id = "minus-minutes-button"
+                        class="minutes"
+                        (click)="subtractMinutes()"
+                        [disabled]="checkDuration()">
+                  -10 мин.
+                </button>
+                <button type="button"
+                        id = "plus-minutes-button"
+                        class="minutes"
+                        (click)="addMinutes()">
+                  +10 мин.
+                </button>
               </div>
             </td>
           </tr>
@@ -49,12 +89,17 @@
             <td class="attribute_value" colspan="3">
               <div class="form-group">
                 <input type="datetime-local" [(ngModel)]="endTimeString"
-                       class="form-control"
+                       class="form-control time-input"
                        id="endTime"
                        name="endTime"
                        placeholder="Введите время конца события"
                        required #endTime="ngModel"
                        (change)="endTimeChange()">
+                <button type="button"
+                        id = "accept-button-2"
+                        class="accept">
+                  Принять
+                </button>
               </div>
             </td>
           </tr>
@@ -87,7 +132,10 @@
                        maxlength="50"
                        size="30"
                        hidden
-                       (change)="checkNewPurposeContent()">
+                       (change)="checkNewPurposeContent()"
+                       (keypress)="checkNewPurposeContent()"
+                       (paste)="checkNewPurposeContent()"
+                       (input)="checkNewPurposeContent()">
               </div>
             </td>
             <td class="attribute_value_button">
@@ -132,7 +180,10 @@
                        maxlength="50"
                        size="30"
                        hidden
-                       (change)="checkNewMeetingRoomContent()">
+                       (change)="checkNewMeetingRoomContent()"
+                       (keypress)="checkNewMeetingRoomContent()"
+                       (paste)="checkNewMeetingRoomContent()"
+                       (input)="checkNewMeetingRoomContent()">
               </div>
             </td>
             <td class="attribute_value_button">
@@ -232,6 +283,8 @@
           Время конца события должно быть не позднее 20:00!</div>
         <div [hidden]="!checkOneDay()" class="alert alert-danger">
           Событие должно проводиться в течение одного дня!</div>
+        <div [hidden]="!checkDurationMinutes()" class="alert alert-danger">
+          Продолжительность события должна быть не менее 10 минут!</div>
       </div>
     </form>
   </div>

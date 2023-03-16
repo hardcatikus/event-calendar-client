@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-root',
@@ -9,8 +10,13 @@ export class AppComponent {
 
   title: string;
 
-  constructor() {
+  constructor(private router: Router) {
     this.title = 'Календарь событий';
+    this.gotoCalendar();
+  }
+
+  gotoCalendar(){
+    this.router.navigate(['/calendar']);
   }
 
 }

@@ -12,7 +12,7 @@ export class PurposeService {
   constructor(private http: HttpClient) {
     this.eventURL = environment.apiBaseUrl;
   }
-
+//eventcalendar/
   public getAllPurposes(): Observable<Purpose[]> {
     return this.http.get<Purpose[]>(this.eventURL + 'rest/purpose/all');
   }
@@ -23,6 +23,10 @@ export class PurposeService {
 
   public addPurpose(purpose: Purpose): Observable<Purpose>{
     return this.http.post<Purpose>(this.eventURL + 'rest/purpose/add', purpose);
+  }
+
+  public deletePurpose(id: number): Observable<String> {
+    return this.http.delete<String>(this.eventURL + 'rest/purpose/' + id);
   }
 
 }

@@ -1,37 +1,50 @@
 <div class="card my-5">
   <div class="card-body">
-    <table border="1">
-      <tbody>
+    <table border="1" id = "table-calendar">
+      <tbody id="tbody-calendar">
       <tr>
-        <td class = "above_calendar_empty_first" >&nbsp;</td>
+        <td class = "above_calendar_empty_first" ></td>
+        <td class = "above_calendar" >
+          <button type="button" (click)="changeDatePreviousDay()" id = "buttonPreviousDay">
+            <
+          </button>
+        </td>
+        <td class = "above_calendar" colspan="2">
+          <input type="date" [(ngModel)]="dateSelected"
+                 class="form-control"
+                 id="dateSelected"
+                 name="dateSelected"
+                 (change)="fillCalendar()">
+        </td>
+        <td class = "above_calendar" >
+          <button type="button" (click)="changeDateNextDay()" id = "buttonNextDay">
+            >
+          </button>
+        </td>
         <td class = "above_calendar" colspan="3" >
           <select [(ngModel)]="meetingRoomSelected"
                   class="form-control"
                   id="meetingRoomSelected"
-                  name="meetingRoomSelected">
+                  name="meetingRoomSelected"
+                  (change)="fillCalendar()">
             <option [ngValue] = 0 disabled >Выберете место события</option>
             <option *ngFor="let meetingRoom of meetingRooms" [ngValue]="meetingRoom.id">{{meetingRoom.name}}</option>
             <option [ngValue] = 100 >Все места событий</option>
           </select>
         </td>
-        <td class = "above_calendar" colspan="3">
-          <input type="date" [(ngModel)]="dateSelected"
-                 class="form-control"
-                 id="dateSelected"
-                 name="dateSelected"
-                 (change)="enableButton()">
-        </td>
-        <td class = "above_calendar" colspan="3">
+        <td class = "above_calendar" colspan="2">
           <button type="button" (click)="fillCalendar()" id = "buttonFillCalendar">
-            Отобразить
+            Применить
           </button>
         </td>
         <td class = "above_calendar" colspan="3">
-          <a routerLink="/event/add" class="btn btn-info">Добавить событие</a>
+          <button type="button" (click)="goToEventFormWithDefaultTime()">
+            Добавить событие
+          </button>
         </td>
       </tr>
       <tr>
-        <td class="above_calendar_empty_second">&nbsp;</td>
+        <td class="above_calendar_empty_second"></td>
         <td><strong>08:00</strong></td>
         <td><strong>09:00</strong></td>
         <td><strong>10:00</strong></td>
@@ -135,21 +148,28 @@
         <td id = "66" (click)="showEventDetails($event)">&nbsp;</td>
         <td id = "72" (click)="showEventDetails($event)">&nbsp;</td>
       </tr>
-      <tr id = "eventDetailsTr">
+      <tr *ngFor="let details of detailsList; trackBy: identify; let i = index">
         <td class="under_calendar">
           <p class = "details_header"><strong>Событие</strong></p>
         </td>
         <td class="under_calendar" colspan="9">
-          <p class="details" align="left" id = "eventDetailsP"></p>
+          <p class="details" align="left" [innerHTML]=" details "></p>
         </td>
         <td class="under_calendar" colspan="3">
-          <button type="button" (click)="goToEventForm()">
+          <button type="button" (click)="goToEventFormWithId(i)">
             Изменить
           </button>
           <br>
           <br>
-          <button type="button" (click)="cancelEvent()">
+          <button type="button" (click)="cancelEvent(i)">
             Отменить
+          </button>
+        </td>
+      </tr>
+      <tr id = "bottomButtonTr" class="bottom-button">
+        <td colspan="13">
+          <button type="button" (click)="goToEventFormWithTime()" class="bottom-button">
+            Добавить событие на это время
           </button>
         </td>
       </tr>
